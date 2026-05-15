@@ -249,8 +249,8 @@ flowchart TB
 | KG Edges (triples) | 9,765 | Neo4j live, 2026-04-29 |
 | KG entity labels | 27 | Neo4j live, 2026-04-29 |
 | KG relationship types | 12 | Neo4j live, 2026-04-29 |
-| VQA Q&A pairs | 8,685 | Supabase live split-aware policy excluding dropped and empty-KG rows, 2026-04-29 |
-| Images | 1,426 | Supabase live `image.is_checked=true` and `image.is_drop=false`, 2026-04-29 |
+| VQA Q&A pairs | 8,193 | Supabase live split-aware policy excluding dropped, empty-KG, and dropped-triple-grounded rows, 2026-05-15 |
+| Images | 1,426 | Supabase live `image.is_checked=true` and `image.is_drop=false`, 2026-05-15 |
 
 > Source: `ViFoodVQA/ViFoodVQA/src/scripts/collect_ground_truth_stats.py`.
 > Older slide/report numbers are historical snapshots; see

@@ -34,12 +34,24 @@ def main() -> None:
 
 def _load_prediction_rows(run_dir: Path) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
-    for path in sorted((run_dir / "predictions").glob("*.jsonl")):
+    for path in _prediction_files(run_dir):
         with path.open("r", encoding="utf-8") as f:
             for line in f:
                 if line.strip():
                     rows.append(json.loads(line))
     return rows
+
+
+def _prediction_files(run_dir: Path) -> list[Path]:
+    prediction_dir = run_dir / "predictions"
+    files = sorted(prediction_dir.glob("*.jsonl")) if prediction_dir.exists() else []
+    if files:
+        return files
+    return sorted(
+        path
+        for path in run_dir.glob("*__*.jsonl")
+        if path.is_file()
+    )
 
 
 def _summary_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:

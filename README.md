@@ -57,15 +57,15 @@ sends the rows to Supabase for human verification.
 
 ## Current Snapshot
 
-Live counts documented on 2026-04-29:
+Live counts documented after the 2026-05-15 KG-triple cascade cleanup:
 
 | Metric | Value | Source |
 | --- | ---: | --- |
 | Verified images | 1,426 | Supabase live `image` table |
-| Canonical VQA pairs | 8,685 | Supabase live `vqa` table, excluding dropped and empty-KG rows |
-| KG nodes | 3,382 | Neo4j live |
-| KG triples / relationships | 9,765 | Neo4j live |
-| KG relationship types | 12 | Neo4j live |
+| Canonical VQA pairs | 8,193 | Supabase live `vqa` table, excluding dropped, empty-KG, and dropped-triple-grounded rows |
+| KG nodes | 3,382 | Neo4j live, 2026-04-29 snapshot |
+| KG triples / relationships | 9,765 | Neo4j live, 2026-04-29 snapshot |
+| KG relationship types | 12 | Neo4j live, 2026-04-29 snapshot |
 
 Before updating public numbers, rerun:
 
