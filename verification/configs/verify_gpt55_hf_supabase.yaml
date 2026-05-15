@@ -1,5 +1,5 @@
 dataset:
-  data_dir: ../../hf_dataset
+  data_dir: ../evaluation/data/vifoodvqa
   calibration_split: test
   target_splits:
     - train
