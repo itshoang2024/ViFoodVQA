@@ -1,0 +1,25 @@
+[project]
+name = "vifood-verify"
+version = "0.1.0"
+description = "LLM-assisted verification workflow for ViFoodVQA"
+readme = "PLAN.md"
+requires-python = ">=3.11"
+dependencies = [
+    "openai>=1.0.0",
+    "pillow>=10.0.0",
+    "python-dotenv>=1.0.0",
+    "pyyaml>=6.0.0",
+    "supabase>=2.0.0",
+    "tqdm>=4.66.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

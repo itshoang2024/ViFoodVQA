@@ -1,0 +1,39 @@
+dataset:
+  data_dir: ../evaluation/data/vifoodvqa
+  calibration_split: test
+  target_splits:
+    - train
+    - validation
+  require_nonempty_triples: true
+  assume_test_rows_are_human_keep: true
+
+paths:
+  output_dir: outputs
+
+run:
+  seed: 42
+  max_output_tokens: 1800
+  temperature: 0
+  prompt_version: vqa_verify_gpt55_v1
+  review_labels:
+    - REVIEW
+  risk_qtypes:
+    - allergen_restrictions
+    - dietary_restrictions
+    - origin_locality
+    - substitution_rules
+
+audit:
+  sample_size: 120
+
+model:
+  type: openai_compatible
+  name: gpt_5_5
+  model_id: gpt-5.5
+  api_key_env: OPENAI_COMPAT_API_KEY
+  base_url_env: OPENAI_COMPAT_BASE_URL
+  default_headers:
+    User-Agent: curl/8.5.0
+  json_response_format: true
+  json_response_format_fallback: true
+

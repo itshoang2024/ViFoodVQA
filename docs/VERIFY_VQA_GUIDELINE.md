@@ -79,6 +79,17 @@ Hiện tại nhóm **không dùng reason làm thành phần chính để benchma
 
 ## 4. Nguyên tắc chung khi verify
 
+### 4.0. Nguồn metadata ảnh
+
+`food_items` và `image_desc` là metadata của ảnh trong Supabase `image` table,
+tra theo `image_id`. Hai trường này không bắt buộc có trong Hugging Face export
+JSONL.
+
+Khi verify thủ công trong Streamlit, thông tin này được đọc từ Supabase. Khi
+verify bằng workflow local từ JSONL, cần enrich thêm từ Supabase nếu muốn dùng
+đủ ngữ cảnh ảnh. Nếu không enrich được, verifier phải xem thiếu metadata là
+giới hạn của run hiện tại, không phải lỗi của HF export.
+
 ### 4.1. Ưu tiên tính đúng đắn hơn tính đẹp
 
 Nếu câu hỏi viết chưa hay nhưng fact đúng, có thể sửa nhẹ để giữ lại.
@@ -89,8 +100,8 @@ Nếu câu hỏi nghe có vẻ ổn nhưng fact sai, phải ưu tiên sửa ho�
 Chỉ giữ VQA nếu có đủ căn cứ từ:
 
 - ảnh
-- `food_items`
-- `image_desc`
+- `food_items` từ Supabase `image`, nếu có
+- `image_desc` từ Supabase `image`, nếu có
 - `triples_used`
 
 Không tự thêm tri thức bên ngoài nếu không có cơ sở rõ ràng.
@@ -120,8 +131,8 @@ Mỗi thành viên nên đi theo đúng thứ tự sau:
 Xem:
 
 - ảnh
-- `food_items`
-- `image_desc`
+- `food_items` từ Supabase `image`, nếu có
+- `image_desc` từ Supabase `image`, nếu có
 
 Mục tiêu là hiểu ngữ cảnh món ăn trong ảnh trước khi đọc câu hỏi.
 
@@ -312,12 +323,7 @@ Nhóm nên dùng luật sau để thống nhất:
 
 - `Q0 <= 2`
 - hoặc `Q1 <= 2`
-
-### Với `Q2 <= 2`:
-
-- xem là cảnh báo mạnh
-- ưu tiên sửa choices nếu sửa được
-- chỉ DROP nếu lỗi choices làm VQA mất giá trị benchmark
+- hoặc `Q2 <= 2`
 
 ### KEEP nếu:
 
