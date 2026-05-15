@@ -90,6 +90,30 @@ def parse_jsonish(value: Any) -> Any:
     return []
 
 
+def normalize_triples_used(value: Any) -> list[dict[str, str]]:
+    triples = parse_jsonish(value)
+    if not isinstance(triples, list):
+        return []
+
+    normalized: list[dict[str, str]] = []
+    for triple in triples:
+        if not isinstance(triple, dict):
+            continue
+        subject = norm(triple.get("subject"))
+        relation = norm(triple.get("relation"))
+        target = norm(triple.get("target"))
+        if not subject or not relation or not target:
+            continue
+        normalized.append(
+            {
+                "subject": subject,
+                "relation": relation,
+                "target": target,
+            }
+        )
+    return normalized
+
+
 def write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -143,8 +167,8 @@ def should_keep_row_by_split_policy(row: dict[str, Any]) -> bool:
     if is_drop:
         return False
 
-    triples_used = parse_jsonish(row.get("triples_used"))
-    if not isinstance(triples_used, list) or not triples_used:
+    triples_used = normalize_triples_used(row.get("triples_used"))
+    if not triples_used:
         return False
 
     if split == "test":
@@ -443,6 +467,10 @@ def normalize_row(
     if local_image_path is None:
         return None
 
+    triples_used = normalize_triples_used(row.get("triples_used"))
+    if not triples_used:
+        return None
+
     return {
         "vqa_id": row.get("vqa_id"),
         "image_id": image_id,
@@ -452,7 +480,7 @@ def normalize_row(
         "choices": choices,
         "answer": answer,
         "rationale": row.get("rationale"),
-        "triples_used": parse_jsonish(row.get("triples_used")),
+        "triples_used": triples_used,
     }
 
 

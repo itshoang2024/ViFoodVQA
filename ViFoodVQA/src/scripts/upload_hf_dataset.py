@@ -142,6 +142,32 @@ def normalize_image_path(value: object, *, jsonl_path: Path, row_number: int) ->
     return str(posix_path)
 
 
+def validate_triples_used(value: object, *, jsonl_path: Path, row_number: int) -> None:
+    if not isinstance(value, list) or not value:
+        raise ValueError(f"Row {row_number} in {jsonl_path} has no triples_used list")
+
+    expected_keys = {"subject", "relation", "target"}
+    for triple_index, triple in enumerate(value, start=1):
+        if not isinstance(triple, dict):
+            raise ValueError(
+                f"Row {row_number} in {jsonl_path} triples_used[{triple_index}] is not an object"
+            )
+        extra_keys = set(triple) - expected_keys
+        missing_keys = expected_keys - set(triple)
+        if extra_keys or missing_keys:
+            raise ValueError(
+                f"Row {row_number} in {jsonl_path} triples_used[{triple_index}] "
+                f"must contain exactly subject, relation, target; "
+                f"extra={sorted(extra_keys)}, missing={sorted(missing_keys)}"
+            )
+        for key in ("subject", "relation", "target"):
+            if not isinstance(triple.get(key), str) or not triple[key].strip():
+                raise ValueError(
+                    f"Row {row_number} in {jsonl_path} triples_used[{triple_index}].{key} "
+                    "must be a non-empty string"
+                )
+
+
 def assert_relative_to(path: Path, parent: Path, *, label: str) -> None:
     try:
         path.relative_to(parent)
@@ -177,6 +203,11 @@ def validate_export(hf_dir: Path) -> ExportStats:
         for index, row in enumerate(rows, start=1):
             image = normalize_image_path(
                 row.get("image"),
+                jsonl_path=jsonl_path,
+                row_number=index,
+            )
+            validate_triples_used(
+                row.get("triples_used"),
                 jsonl_path=jsonl_path,
                 row_number=index,
             )

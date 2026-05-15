@@ -10,7 +10,7 @@ from tempfile import TemporaryDirectory
 SCRIPTS_DIR = Path(__file__).resolve().parents[1] / "src" / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 
-from export_hf_dataset import normalize_row
+from export_hf_dataset import normalize_row, normalize_triples_used
 
 
 def temp_dir() -> TemporaryDirectory[str]:
@@ -20,6 +20,21 @@ def temp_dir() -> TemporaryDirectory[str]:
 
 
 class ExportHFDatasetTest(unittest.TestCase):
+    def test_normalize_triples_used_removes_non_schema_fields(self) -> None:
+        triples = normalize_triples_used(
+            [
+                {
+                    "target": "T",
+                    "subject": "S",
+                    "evidence": None,
+                    "relation": "R",
+                    "source_url": None,
+                }
+            ]
+        )
+
+        self.assertEqual(triples, [{"subject": "S", "relation": "R", "target": "T"}])
+
     def test_normalize_row_reuses_existing_image_without_downloading(self) -> None:
         with temp_dir() as tmp:
             hf_dir = Path(tmp)
@@ -41,7 +56,15 @@ class ExportHFDatasetTest(unittest.TestCase):
                 "choice_d": "D",
                 "answer": "A",
                 "rationale": "R",
-                "triples_used": [{"subject": "s", "relation": "r", "target": "t"}],
+                "triples_used": [
+                    {
+                        "subject": "s",
+                        "relation": "r",
+                        "target": "t",
+                        "evidence": None,
+                        "source_url": None,
+                    }
+                ],
                 "verify_decision": None,
                 "image": {"image_url": "https://example.com/image001.png", "is_drop": False},
             }
@@ -57,6 +80,7 @@ class ExportHFDatasetTest(unittest.TestCase):
 
             self.assertIsNotNone(output)
             self.assertEqual(output["image"], "images/image001.png")
+            self.assertEqual(output["triples_used"], [{"subject": "s", "relation": "r", "target": "t"}])
 
     def test_normalize_row_skips_when_local_image_is_missing_and_download_disabled(self) -> None:
         with temp_dir() as tmp:
