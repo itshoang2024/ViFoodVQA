@@ -405,9 +405,13 @@ def normalize_row(
 
     image_source_type = detect_image_source_type(image_url)
 
-    local_image_path: str | None = None
+    local_image_path = find_existing_image(image_id, image_dir, hf_dir)
 
-    if download_images and should_download_image(image_source_type, download_source):
+    if (
+        local_image_path is None
+        and download_images
+        and should_download_image(image_source_type, download_source)
+    ):
         local_image_path = download_image(
             image_url=image_url,
             image_id=image_id,
@@ -434,6 +438,9 @@ def normalize_row(
         return None
 
     if not question or not qtype:
+        return None
+
+    if local_image_path is None:
         return None
 
     return {
