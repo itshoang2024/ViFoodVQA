@@ -66,10 +66,13 @@ def main() -> None:
         splits,
         require_nonempty_triples=bool(cfg["dataset"].get("require_nonempty_triples", True)),
     )
-    rows_by_split = {
-        split: _select_rows(rows, sample_ids=args.sample_ids, limit=args.limit)
-        for split, rows in rows_by_split.items()
-    }
+    rows_by_split = _select_rows_by_split(
+        rows_by_split,
+        sample_ids=args.sample_ids,
+        limit=args.limit,
+        row_start=args.row_start,
+        row_end=args.row_end,
+    )
     metadata_summary = enrich_rows_by_split(rows_by_split, cfg.get("metadata", {}))
     (run_dir / "metadata_summary.json").write_text(
         json.dumps(metadata_summary, ensure_ascii=False, indent=2),
@@ -110,6 +113,8 @@ def _add_common_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--run-id")
     parser.add_argument("--splits", nargs="*")
     parser.add_argument("--limit", type=int)
+    parser.add_argument("--row-start", type=int, help="1-based inclusive global row start after split loading.")
+    parser.add_argument("--row-end", type=int, help="1-based inclusive global row end after split loading.")
     parser.add_argument("--sample-ids", nargs="*", type=int)
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
@@ -168,6 +173,8 @@ def _run_split(
             sample,
             assume_test_keep=bool(cfg["dataset"].get("assume_test_rows_are_human_keep", True)),
         )
+        if "_global_row_index" in sample.row:
+            result["global_row_index"] = sample.row["_global_row_index"]
         result["metadata_source"] = sample.row.get("_metadata_source", "missing")
         result["metadata_missing_fields"] = sample.row.get("_metadata_missing_fields", [])
         write_jsonl_row(out_path, result)
@@ -253,6 +260,58 @@ def _write_outputs(
         audit_sample=audit_sample,
         metadata_summary=_read_metadata_summary(run_dir),
     )
+
+
+def _select_rows_by_split(
+    rows_by_split: dict[str, list[VQARow]],
+    *,
+    sample_ids: list[int] | None,
+    limit: int | None,
+    row_start: int | None,
+    row_end: int | None,
+) -> dict[str, list[VQARow]]:
+    if row_start is not None or row_end is not None:
+        if sample_ids:
+            raise ValueError("--row-start/--row-end cannot be combined with --sample-ids")
+        if limit is not None:
+            raise ValueError("--row-start/--row-end cannot be combined with --limit")
+        return _select_global_row_range(rows_by_split, row_start=row_start, row_end=row_end)
+
+    return {
+        split: _select_rows(rows, sample_ids=sample_ids, limit=limit)
+        for split, rows in rows_by_split.items()
+    }
+
+
+def _select_global_row_range(
+    rows_by_split: dict[str, list[VQARow]],
+    *,
+    row_start: int | None,
+    row_end: int | None,
+) -> dict[str, list[VQARow]]:
+    start = row_start or 1
+    end = row_end
+    total = sum(len(rows) for rows in rows_by_split.values())
+    if start < 1:
+        raise ValueError("--row-start must be >= 1")
+    if end is not None and end < start:
+        raise ValueError("--row-end must be >= --row-start")
+    if start > total:
+        raise ValueError(f"--row-start {start} exceeds loaded row count {total}")
+
+    selected: dict[str, list[VQARow]] = {split: [] for split in rows_by_split}
+    ordinal = 0
+    for split, rows in rows_by_split.items():
+        for row in rows:
+            ordinal += 1
+            if ordinal < start:
+                continue
+            if end is not None and ordinal > end:
+                continue
+            row.row["_global_row_index"] = ordinal
+            selected[split].append(row)
+
+    return selected
 
 
 def _select_rows(rows: list[VQARow], *, sample_ids: list[int] | None, limit: int | None) -> list[VQARow]:

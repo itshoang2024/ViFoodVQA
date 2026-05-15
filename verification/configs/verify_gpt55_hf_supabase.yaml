@@ -45,3 +45,6 @@ model:
     User-Agent: curl/8.5.0
   json_response_format: true
   json_response_format_fallback: true
+  image_max_side: 1600
+  image_max_bytes: 2000000
+  image_jpeg_quality: 85

@@ -88,7 +88,7 @@ existing human rubric from `ViFoodVQA/docs/VERIFY_VQA_GUIDELINE.md`:
 | `src/vifood_verify/verifier.py` | Calls the model, parses pass outputs, aggregates final `KEEP`, `DROP`, or `REVIEW`. |
 | `src/vifood_verify/data.py` | Loads JSONL split rows, validates image/choice/triple fields, and filters dropped or empty-triple rows. |
 | `src/vifood_verify/metadata.py` | Optional Supabase `image` metadata enrichment by `image_id` for `food_items` and `image_desc`, plus run-level metadata diagnostics. |
-| `src/vifood_verify/model.py` | OpenAI-compatible GPT client plus `dry_run` model for local smoke tests. |
+| `src/vifood_verify/model.py` | OpenAI-compatible GPT client, image downsampling/compression for API data URLs, plus `dry_run` model for local smoke tests. |
 | `src/vifood_verify/metrics.py` | Overall and per-qtype calibration/decision metrics. |
 | `src/vifood_verify/audit.py` | Human review queue and stratified audit sample builders. |
 | `src/vifood_verify/report.py` | Markdown run report writer. |

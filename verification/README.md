@@ -51,6 +51,10 @@ only. It must not update Supabase verification fields.
 Use `configs/verify_gpt55_hf_supabase.yaml` for the canonical 2026-05-15
 `hf_dataset` snapshot plus Supabase `image` metadata enrichment.
 
+Large local images are downsampled and JPEG-compressed before being embedded as
+API data URLs. The default config keeps the long side at or below `1600` pixels
+and the encoded image payload near `2 MB` or less to avoid request-body errors.
+
 ## Commands
 
 Run calibration on the human-verified test split first:
@@ -93,4 +97,7 @@ outputs/<run_id>/
 - `verify` writes `train.jsonl` and `validation.jsonl`.
 - `all` writes calibration and target split artifacts in one run.
 - `--resume` skips rows already present in the target output JSONL.
+- `--row-start N --row-end M` runs a 1-based inclusive global row range after
+  split loading. For `verify`, the default order is all `train` rows followed by
+  all `validation` rows. Use separate `--run-id` values when parallelizing.
 - `--dry-run` never calls GPT and intentionally marks rows for review.
