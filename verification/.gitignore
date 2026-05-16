@@ -1,6 +1,6 @@
 data/
 hub/
-outputs/
+# outputs/
 .env
 .pytest_cache/
 __pycache__/

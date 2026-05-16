@@ -1,0 +1,60 @@
+{
+  "dataset": {
+    "data_dir": "../../hf_dataset",
+    "calibration_split": "test",
+    "target_splits": [
+      "train",
+      "validation"
+    ],
+    "require_nonempty_triples": true,
+    "assume_test_rows_are_human_keep": true
+  },
+  "metadata": {
+    "source": "supabase_image",
+    "required": true,
+    "table": "image",
+    "columns": "image_id,food_items,image_desc",
+    "batch_size": 200,
+    "url_env": "SUPABASE_URL",
+    "key_env": "SUPABASE_KEY"
+  },
+  "paths": {
+    "output_dir": "outputs"
+  },
+  "run": {
+    "seed": 42,
+    "max_output_tokens": 1800,
+    "temperature": 0,
+    "prompt_version": "vqa_verify_gpt55_v1",
+    "risk_qtypes": [
+      "allergen_restrictions",
+      "dietary_restrictions",
+      "origin_locality",
+      "substitution_rules"
+    ],
+    "review_labels": [
+      "REVIEW"
+    ]
+  },
+  "audit": {
+    "sample_size": 120
+  },
+  "model": {
+    "type": "openai_compatible",
+    "name": "gpt_5_5",
+    "model_id": "gpt-5.5",
+    "api_key_env": "OPENAI_COMPAT_API_KEY",
+    "base_url_env": "OPENAI_COMPAT_BASE_URL",
+    "json_response_format": true,
+    "json_response_format_fallback": true,
+    "default_headers": {
+      "User-Agent": "curl/8.5.0"
+    },
+    "image_max_side": 1600,
+    "image_max_bytes": 2000000,
+    "image_jpeg_quality": 85
+  },
+  "_config_path": "D:\\Code\\HCMUS\\NNHTK\\ViFoodVQA\\verification\\configs\\verify_gpt55_hf_supabase.yaml",
+  "_verification_root": "D:\\Code\\HCMUS\\NNHTK\\ViFoodVQA\\verification",
+  "_project_root": "D:\\Code\\HCMUS\\NNHTK\\ViFoodVQA"
+}

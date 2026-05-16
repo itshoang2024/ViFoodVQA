@@ -1,0 +1,19 @@
+[
+  {
+    "split": "test",
+    "rows": 1401,
+    "unique_images": 248,
+    "qtypes": {
+      "dietary_restrictions": 150,
+      "ingredients": 206,
+      "ingredient_category": 262,
+      "cooking_technique": 197,
+      "origin_locality": 78,
+      "flavor_profile": 145,
+      "food_pairings": 113,
+      "allergen_restrictions": 78,
+      "dish_classification": 170,
+      "substitution_rules": 2
+    }
+  }
+]

@@ -1,0 +1,11 @@
+split,qtype,total,llm_keep,llm_drop,llm_review,review_rate,human_keep,human_drop,agreement_rate,false_keep_rate,false_drop_rate
+test,allergen_restrictions,78,46,14,18,0.230769,78,0,0.766667,n/a,0.179487
+test,cooking_technique,197,125,8,64,0.324873,197,0,0.939850,n/a,0.040609
+test,dietary_restrictions,150,30,33,87,0.580000,150,0,0.476190,n/a,0.220000
+test,dish_classification,170,124,21,25,0.147059,170,0,0.855172,n/a,0.123529
+test,flavor_profile,145,85,12,48,0.331034,145,0,0.876289,n/a,0.082759
+test,food_pairings,113,50,29,34,0.300885,113,0,0.632911,n/a,0.256637
+test,ingredient_category,262,77,68,117,0.446565,262,0,0.531034,n/a,0.259542
+test,ingredients,206,84,51,71,0.344660,206,0,0.622222,n/a,0.247573
+test,origin_locality,78,35,18,25,0.320513,78,0,0.660377,n/a,0.230769
+test,substitution_rules,2,0,1,1,0.500000,2,0,0.000000,n/a,0.500000

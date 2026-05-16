@@ -1,0 +1,13 @@
+{
+  "requested_source": "supabase_image",
+  "total_rows": 1401,
+  "unique_image_ids": 248,
+  "effective_source_counts": {
+    "supabase_image": 1401
+  },
+  "metadata_missing_count": 0,
+  "missing_food_items_count": 0,
+  "missing_image_desc_count": 0,
+  "lookup_failure_count": 0,
+  "lookup_failures": []
+}
